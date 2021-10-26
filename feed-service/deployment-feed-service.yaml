@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feed-service-deployment
+  labels:
+    app: feed-service
+spec:
+  # Number of pods to replicate.
+  replicas: 4
+
+  # Helps to identify which pods to manage. More sophisticated selection rules are possible than just using the template's label.
+  selector:
+    # Specify a label that can be found in this spec's template for pods.
+    matchLabels:
+      app: feed-service-pod
+
+  # Template for pods
+  template:
+    # Specify info that will help in identifying this template.
+    metadata:
+      labels:
+        app: feed-service-pod
+
+    # The desired attributes of this templates containers and such.
+    spec:
+      # A list of containers to create. We could create a Nodejs container, a Postgres container, a Redis container all in one pod.
+      containers:
+      - name: feed-service-container
+        image: folushooladipo/metagram-feed-service:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: 8082
+        envFrom:
+        - configMapRef:
+            name: env-configmap
+        - secretRef:
+            name: env-secret
+        - secretRef:
+            name: aws-secret
+        env:
+        - name: PORT
+          value: "8082"

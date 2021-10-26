@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service-deployment
+  labels:
+    app: user-service
+spec:
+  # Number of pods to replicate.
+  replicas: 3
+
+  # Helps to identify which pods to manage. More sophisticated selection rules are possible than just using the template's label.
+  selector:
+    # Specify a label that can be found in this spec's template for pods.
+    matchLabels:
+      app: user-service-pod
+
+  # Template for pods
+  template:
+    # Specify info that will help in identifying this template.
+    metadata:
+      labels:
+        app: user-service-pod
+
+    # The desired attributes of this templates containers and such.
+    spec:
+      # A list of containers to create. We could create a Nodejs container, a Postgres container, a Redis container all in one pod.
+      containers:
+      - name: user-service-container
+        image: folushooladipo/metagram-user-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8081
+        envFrom:
+        - configMapRef:
+            name: env-configmap
+        - secretRef:
+            name: env-secret
+        env:
+        - name: PORT
+          value: "8081"

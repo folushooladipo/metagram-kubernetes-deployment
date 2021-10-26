@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: feed-service
+spec:
+  clusterIP: 10.100.60.1
+  selector:
+    app: feed-service-pod
+  ports:
+  - port: 8082
+    targetPort: 8082
+    protocol: TCP

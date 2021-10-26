@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reverse-proxy-deployment
+  labels:
+    app: reverse-proxy
+spec:
+  # Number of pods to replicate.
+  replicas: 2
+
+  # Helps to identify which pods to manage. More sophisticated selection rules are possible than just using the template's label.
+  selector:
+    # Specify a label that can be found in this spec's template for pods.
+    matchLabels:
+      app: reverse-proxy-pod
+
+  # Template for pods
+  template:
+    # Specify info that will help in identifying this template.
+    metadata:
+      labels:
+        app: reverse-proxy-pod
+
+    # The desired attributes of this templates containers and such.
+    spec:
+      # A list of containers to create. We could create a Nodejs container, a Postgres container, a Redis container all in one pod.
+      containers:
+      - name: reverse-proxy-container
+        image: folushooladipo/metagram-reverse-proxy:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080

@@ -1,52 +1,78 @@
-# About
-This project is used to deploy all the parts of Metagram to a Kubernetes§ (K8s) cluster on AWS EKS using a microservices architecture.
+# Introduction
+This project is used to deploy all the parts of Metagram to a Kubernetes (K8s) cluster on AWS EKS using a microservices architecture. This is also my submission for the capstone project in the Cloud Developer nanodegree on Udacity.
 
-## Deployment steps
-- NB: these steps assume that you're deploying to [AWS EKS](https://console.aws.amazon.com/eks/home).
-- These steps also assume that you have the [AWS CLI](https://aws.amazon.com/cli/) installed.
-- Make sure that your current AWS profile has permissions for the cluster you want to work on. A simple way to do this is to make sure that the same user that created the EKS cluster is the one whose details are configured as the AWS profile in use by the AWS CLI.
-- Get your cluster's name from EKS and use it to give `kubectl` the correct cluster context using:
-```bash
-aws eks --region us-east-1 update-kubeconfig --name <EKS_CLUSTER_NAME>
-```
-- Create all the K8s services for the reverse proxy, frontend app etc. As a convention in this project, such services can be found in the `service-<APP_NAME>.yaml` files that are in the directories for Metagram's parts e.g `service-reverse-proxy.yaml`. Right now, the command below is sufficent. However if you add more services, don't forget to apply them to the cluster as well.
-```bash
-kubectl apply -f feed-service/service-feed-service.yaml && \
-  kubectl apply -f user-service/service-user-service.yaml && \
-  kubectl apply -f reverse-proxy/service-reverse-proxy.yaml && \
-  kubectl apply -f frontend-app/service-frontend-app.yaml
-```
-- Create all the load balancers that will expose certain services to the internet. These load balancers are a special type of K8s service and this project uses a convention of giving them names like `expose-<APP_NAME>.yaml` e.g `expose-reverse-proxy.yaml`. Only `reverse-proxy` and `frontend-app` are exposed to the internet right now, so you can use:
-```bash
-kubectl apply -f reverse-proxy/expose-reverse-proxy.yaml && \
-  kubectl apply -f frontend-app/expose-frontend-app.yaml
-```
-- We need to use the addresses of the load balancers created above. So do the following:
-    - List the K8s services in the app using `kubectl get svc`.
-    - Copy the external IP for the `expose-reverse-proxy` service and specify it as the value for `API_DOMAIN` in `env-secret.yaml` using the format `http://<REVERSE_PROXY_EXTERNAL_IP>`.
-    - Also, copy the external IP for the `expose-frontend-app` service and specify it as the value for `FRONTEND_APP_URL` in `env-secret.yaml` using the format `http://<FRONTEND_APP_EXTERNAL_IP>`.
-    - Finally, open Travis CI in a browser and modify the `metagram-frontend-app` build pipeline by setting its `API_DOMAIN` environment variable to `http://<REVERSE_PROXY_EXTERNAL_IP>`.
-- Apply all the config maps and secrets (e.g `aws-secret.yaml, env-configmap.yaml` etc) located in the root of the project using:
-```bash
-kubectl apply -f env-configmap.yaml && \
-  kubectl apply -f env-secret.yaml && \
-  kubectl apply -f aws-secret.yaml
-```
-- Finally, deploy the pods that contain all parts of Metagram i.e frontend, microservices, reverse proxy etc. This project uses a convention of using a format of `deployment-<APP_NAME>` to name all files that contain K8s Deployments. So, use the following to deploy our pods:
-```bash
-kubectl apply -f feed-service/deployment-feed-service.yaml && \
-  kubectl apply -f user-service/deployment-user-service.yaml && \
-  kubectl apply -f reverse-proxy/deployment-reverse-proxy.yaml && \
-  kubectl apply -f frontend-app/deployment-frontend-app.yaml
+## Table of Contents
+1. [Introduction](#introduction)
+1. [Table of Contents](#table-of-contents)
+1. [Metagram's Architecture](#metagrams-architecture)
+1. [Using Continuous Integration and Deployment (CI/CD)](#using-continuous-integration-and-deployment-ci-cd)
+1. [Required Software](#required-software)
+1. [Running this Project](#running-this-project)
+1. [Locally Building and Running Images](#locally-building-and-running-images)
+1. [How to Deploy](#how-to-deploy)
 
-```
-- Visit the external IP of `expose-frontend-app` and you should be able to see the app working.
+## Metagram's Architecture
+Metagram was built using a microservices architecture. Here are links to the GitHub repositories for each of this project's microservices:
+1. [The user service](https://github.com/folushooladipo/metagram-user-service)
+1. [The feed service](https://github.com/folushooladipo/metagram-feed-service)
+1. [The reverse proxy service](https://github.com/folushooladipo/metagram-reverse-proxy)
+1. [The frontend app](https://github.com/folushooladipo/metagram-frontend-app)
 
-## ClusterIPs
-Various services have been given specific cluster IPs so that no matter when those services are created, they will always have the same intra-cluster IP address.
-- 10.100.10.1: The frontend app's load balancer that is used to expose it to the internet.
-- 10.100.20.1: The service for pods that contain the frontend app.
-- 10.100.30.1: The load balancer used to expose the reverse proxy service
-- 10.100.40.1: The reverse proxy's k8s service.
-- 10.100.50.1: The user service.
-- 10.100.60.1: The feed service.
+## Using Continuous Integration and Deployment (CI/CD)
+Every microservice in this project uses:
+- [GitHub Actions](https://github.com/features/actions) for CI.
+- [Docker Hub](https://hub.docker.com/) for CD.
+
+## Required Software
+In order to run this application, you need to have the following software installed:
+1. Docker and docker-compose: You can get these by installing [Docker Desktop](https://www.docker.com/products/docker-desktop).
+1. [Git](https://git-scm.com/downloads)
+
+If you want to use the instructions in the [local-build-and-run section](#locally-building-and-running-images) to build the app locally and then run it, you also need to install:
+1. [Node.js 14+](https://nodejs.org/en/download/): if you use a Mac, I suggest using [NVM](https://github.com/nvm-sh/nvm) to manage your current Node.js installation. npm will be installed along with Node.js. (NB: "Node.js 14+" means versions 14, 15, 16, 17 etc are all fine.)
+1. [Yarn](https://yarnpkg.com/): Most services in Metagram use Yarn as their package manager with the exception of `frontend-app`.
+
+## Running this Project
+It is very easy to run this project on your machine. Just do the following:
+- Create a copy of `SAMPLE-set_env_vars.sh`, save it as `set_env_vars.sh` and fill in the values it requires.
+- Run the below to set the correct enviroment variables that each container will need:
+```bash
+./set_env_vars.sh
+```
+- Make sure Docker Desktop is running.
+- Use the below to pull the Docker images for each microservice (if necessary) and run them all in containers:
+```bash
+docker-compose up
+```
+- Open a web browser and visit [http://localhost:4200](http://localhost:4200).
+
+## Locally Building and Running Images
+- Open a terminal/command prompt and navigate to the root directory for this repository.
+- Run the below to clone the repositories for each microservice and place them in the parent directory for the current one i.e as siblings of this directory:
+```bash
+git clone https://github.com/folushooladipo/metagram-frontend-app ../metagram-frontend-app && \
+  git clone https://github.com/folushooladipo/metagram-reverse-proxy ../metagram-reverse-proxy && \
+  git clone https://github.com/folushooladipo/metagram-user-service ../metagram-user-service && \
+  git clone https://github.com/folushooladipo/metagram-feed-service ../metagram-feed-service
+```
+- You need to modify the config for reverse-proxy so that it works for a local environment as opposed to a Kubernetes cluster. To do this, edit the `nginx.conf` in `../metagram-reverse-proxy` by:
+    - Commenting out all lines that start with `server 10.100*`.
+    - Uncommenting all lines that start with `server host.docker.internal:*`.
+- Create a copy of `SAMPLE-set_env_vars.sh`, save it as `set_env_vars.sh` and fill in the values it requires.
+- Run the below to set the correct enviroment variables that each container will need:
+```bash
+./set_env_vars.sh
+```
+- Make sure Docker Desktop is running.
+- Run this to build the images for each service:
+```bash
+docker-compose -f build-images.yaml build
+```
+- Run this to start all the containers that contain Metagram's microservices:
+```bash
+docker-compose -f docker-compose-local.yaml up
+```
+- Open a web browser and visit [http://localhost:4200](http://localhost:4200).
+
+## How to Deploy
+For info on how to deploy this app to your own cluster, checkout the instructions in [deployment.md](./deployment.md)

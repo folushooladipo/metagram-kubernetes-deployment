@@ -1,0 +1,21 @@
+version: "3"
+services:
+  reverse-proxy:
+    build:
+      context: ../reverse-proxy
+    image: reverse-proxy
+
+  user-service:
+    build:
+      context: ../user-service
+    image: user-service
+
+  feed-service:
+    build:
+      context: ../feed-service
+    image: feed-service
+
+  frontend-app:
+    build:
+      context: ../frontend-app
+    image: frontend-app

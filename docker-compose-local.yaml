@@ -1,0 +1,50 @@
+version: "3"
+services:
+  reverse-proxy:
+      image: reverse-proxy
+      ports:
+        - 8080:8080
+      restart: always
+      depends_on:
+        - user-service
+        - feed-service
+
+  user-service:
+    image: user-service
+    ports:
+        - 8081:8081
+    environment:
+      DB_HOST: $DB_HOST
+      DB_NAME: $DB_NAME 
+      DB_PASSWORD: $DB_PASSWORD 
+      DB_USERNAME: $DB_USERNAME
+      FRONTEND_APP_URL: $FRONTEND_APP_URL
+      JWT_SECRET: $JWT_SECRET
+      PORT: 8081
+      NODE_ENV: "local"
+      URL: "http://localhost:4200"
+
+  feed-service:
+    image: feed-service
+    ports:
+      - 8082:8082
+    volumes:
+      - $HOME/.aws:/root/.aws
+    environment:
+      AUTH_ENDPOINT: "host.docker.internal:8082"
+      AWS_REGION: $AWS_REGION
+      AWS_PROFILE: $AWS_PROFILE 
+      AWS_MEDIA_BUCKET_NAME: $AWS_MEDIA_BUCKET_NAME
+      DB_HOST: $DB_HOST
+      DB_NAME: $DB_NAME
+      DB_PASSWORD: $DB_PASSWORD 
+      DB_USERNAME: $DB_USERNAME
+      FRONTEND_APP_URL: $FRONTEND_APP_URL
+      PORT: 8082
+      NODE_ENV: "local"
+      URL: "http://localhost:4200"
+
+  frontend-app:
+    image: frontend-app
+    ports:
+      - "4200:80"

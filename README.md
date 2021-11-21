@@ -1,5 +1,5 @@
 # Introduction
-This project is used to deploy all the parts of Metagram to a Kubernetes (K8s) cluster on AWS EKS using a microservices architecture. This is also my submission for the capstone project in the Cloud Developer nanodegree on Udacity.
+This project is used to deploy all the parts of Metagram to a Kubernetes (K8s) cluster on AWS EKS using a microservices architecture. This is also my submission for the capstone project in the Cloud Developer nanodegree on Udacity. You can find screenshots of the build history for each microservice in [this directory](./screenshots).
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -21,7 +21,7 @@ Metagram was built using a microservices architecture. Here are links to the Git
 ## Using Continuous Integration and Deployment (CI/CD)
 Every microservice in this project uses:
 - [GitHub Actions](https://github.com/features/actions) for CI.
-- [Docker Hub](https://hub.docker.com/) for CD.
+- [Docker Hub](https://hub.docker.com/) for CD. You can find screenshots of the build history for each microservice in [this directory](./screenshots).
 
 ## Required Software
 In order to run this application, you need to have the following software installed:

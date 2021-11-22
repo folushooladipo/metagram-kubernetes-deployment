@@ -6,7 +6,7 @@ metadata:
     app: user-service
 spec:
   # Number of pods to replicate.
-  replicas: 3
+  replicas: 2
 
   # Helps to identify which pods to manage. More sophisticated selection rules are possible than just using the template's label.
   selector:

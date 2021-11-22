@@ -16,8 +16,7 @@ This app uses configmaps and env secrets to store the info the pods in the clust
 - `base64`: A utility for encoding and decoding Base64 strings. If you don't have it, you can [use Homebrew](https://formulae.brew.sh/formula/base64#default) to install it on a Mac or [search for installation instructions](https://www.google.com/search?client=firefox-b-d&q=install+base64+utitlity) for your machine.
 
 ## Deployment steps
-- NB: these steps assume that you're deploying to [AWS EKS](https://console.aws.amazon.com/eks/home).
-- These steps also assume that you have the [AWS CLI](https://aws.amazon.com/cli/) installed.
+- NB: these steps assume that you're deploying to [AWS EKS](https://console.aws.amazon.com/eks/home). Therefore, these steps require that you have the [AWS CLI](https://aws.amazon.com/cli/) installed.
 - Make sure that your current AWS profile has permissions for the cluster you want to work on. A simple way to do this is to make sure that the same user that created the EKS cluster is the one whose details are configured as the AWS profile in use by the AWS CLI.
 - Get your cluster's name from EKS and use it to give `kubectl` the correct cluster context using:
 ```bash
@@ -40,7 +39,7 @@ kubectl apply -f reverse-proxy/expose-reverse-proxy.yaml && \
     - Copy the external IP for the `expose-reverse-proxy` service and specify it as the value for `API_DOMAIN` in `env-secret.yaml` using the format `http://<REVERSE_PROXY_EXTERNAL_IP>`.
     - Also, copy the external IP for the `expose-frontend-app` service and specify it as the value for `FRONTEND_APP_URL` in `env-secret.yaml` using the format `http://<FRONTEND_APP_EXTERNAL_IP>`.
     - Finally, open Travis CI in a browser and modify the `metagram-frontend-app` build pipeline by setting its `API_DOMAIN` environment variable to `http://<REVERSE_PROXY_EXTERNAL_IP>`.
-- Apply all the config maps and secrets (e.g `aws-secret.yaml, env-configmap.yaml` etc) located in the root of the project using:
+- Apply all the config maps and secrets (e.g `aws-secret.yaml, env-configmap.yaml` etc) located in the root of this project using:
 ```bash
 kubectl apply -f env-configmap.yaml && \
   kubectl apply -f env-secret.yaml && \

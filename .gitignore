@@ -1,3 +1,7 @@
 aws-secret.yaml
 env-configmap.yaml
 env-secret.yaml
+
+.DS_STORE
+todo.txt
+node_modules

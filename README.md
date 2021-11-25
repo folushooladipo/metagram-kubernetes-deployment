@@ -3,7 +3,6 @@ This project is used to deploy all the parts of Metagram to a Kubernetes (K8s) c
 
 ## Table of Contents
 1. [Introduction](#introduction)
-1. [Deployed Instance](#deployed-instance)
 1. [Table of Contents](#table-of-contents)
 1. [Metagram's Architecture](#metagrams-architecture)
 1. [Using Continuous Integration and Deployment (CI/CD)](#using-continuous-integration-and-deployment-ci-cd)
@@ -11,9 +10,6 @@ This project is used to deploy all the parts of Metagram to a Kubernetes (K8s) c
 1. [Running this Project](#running-this-project)
 1. [Locally Building and Running Images](#locally-building-and-running-images)
 1. [How to Deploy](#how-to-deploy)
-
-## Deployed Instance
-You can find a deployed instance of this project at [this URL](http://aa1b02d1e669a492ea551cd256a00d7d-300465093.us-east-1.elb.amazonaws.com/).
 
 ## Metagram's Architecture
 Metagram was built using a microservices architecture. Here are links to the GitHub repositories for each of this project's microservices:

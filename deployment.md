@@ -12,8 +12,8 @@ This app uses configmaps and env secrets to store the info the pods in the clust
 - SAMPLE-env-secret.yaml ==> env-secret.yaml
 - SAMPLE-aws-secret.yaml ==> aws-secret.yaml
 **Pro tip**: In order to encode values as Base64 strings, run `echo -n "SOME_VALUE" | base64` in a terminal, meaning:
-- `echo -n`: echo the specified value without appending a newline.
-- `base64`: A utility for encoding and decoding Base64 strings. If you don't have it, you can [use Homebrew](https://formulae.brew.sh/formula/base64#default) to install it on a Mac or [search for installation instructions](https://www.google.com/search?client=firefox-b-d&q=install+base64+utitlity) for your machine.
+    - `echo -n`: echo the specified value without appending a newline.
+    - `base64`: A utility for encoding and decoding Base64 strings. If you don't have it, you can [use Homebrew](https://formulae.brew.sh/formula/base64#default) to install it on a Mac or [search for installation instructions](https://www.google.com/search?client=firefox-b-d&q=install+base64+utitlity) for your machine.
 
 ## Deployment steps
 - NB: these steps assume that you're deploying to [AWS EKS](https://console.aws.amazon.com/eks/home). Therefore, these steps require that you have the [AWS CLI](https://aws.amazon.com/cli/) installed.
